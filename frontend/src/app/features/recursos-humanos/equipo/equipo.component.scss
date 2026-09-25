@@ -1,0 +1,273 @@
+:host {
+  display: block;
+}
+
+.equipo-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__integrantes {
+    min-width: 0;
+  }
+
+  &__catalogos {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+  }
+}
+
+.catalogo {
+  &__header {
+    margin-bottom: 12px;
+
+    h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      color: #0f172a;
+    }
+  }
+
+  &__form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    .field__input {
+      flex: 1;
+    }
+  }
+
+  &__table-wrap {
+    max-height: 32vh;
+  }
+}
+
+.page {
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.3rem;
+      color: #0f172a;
+    }
+
+    p {
+      margin: 0;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.table-wrap {
+  max-height: 50vh;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+
+  th,
+  td {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  tbody tr:not(:last-child) td {
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  td {
+    color: #0f172a;
+  }
+
+  &__empty {
+    text-align: center;
+    color: #64748b;
+    padding: 32px 16px;
+    white-space: normal;
+
+    &--error {
+      color: #b91c1c;
+    }
+  }
+
+  &__row--selectable {
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      background: #f8fafc;
+    }
+  }
+
+  &__actions-col {
+    width: 1%;
+  }
+
+  &__actions {
+    white-space: nowrap;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #dcfce7;
+  color: #166534;
+
+  &--inactive {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+}
+
+.btn {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+
+  &--primary {
+    background: #2563eb;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+  }
+
+  &--ghost {
+    background: #fff;
+    border-color: #cbd5e1;
+    color: #334155;
+
+    &:hover:not(:disabled) {
+      background: #f1f5f9;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #0f172a;
+  }
+
+  &__alert {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  &__input {
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    padding: 0 12px;
+    font-size: 0.9rem;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    box-sizing: border-box;
+    background: #fff;
+    width: 100%;
+
+    &:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+  }
+
+  &__error {
+    font-size: 0.78rem;
+    color: #b91c1c;
+  }
+}

@@ -1,0 +1,149 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+
+  &__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__content {
+    flex: 1;
+    padding: 28px;
+  }
+}
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: #0f172a;
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  box-sizing: border-box;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 10px 24px;
+  }
+
+  &__logo {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    display: block;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+
+    &--active {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    &--toggle {
+      justify-content: flex-start;
+    }
+
+    &--sub {
+      padding-left: 34px;
+      font-size: 0.85rem;
+    }
+  }
+
+  &__nav-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  &__chevron {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+
+    &--open {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 14px 28px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+
+  &__user {
+    color: #334155;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  &__logout {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background: #f1f5f9;
+    }
+  }
+}

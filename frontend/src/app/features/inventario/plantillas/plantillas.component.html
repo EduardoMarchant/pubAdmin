@@ -1,0 +1,92 @@
+<div class="page">
+  <header class="page__header">
+    <div>
+      <h1>Plantillas de inventario</h1>
+      <p>Administra plantillas para agilizar la carga de inventario.</p>
+    </div>
+    <button type="button" class="btn btn--primary" (click)="abrirCrear()">+ Nueva planilla</button>
+  </header>
+
+  @if (loading()) {
+    <p class="page__state">Cargando plantillas…</p>
+  } @else if (errorMessage()) {
+    <p class="page__state page__state--error">{{ errorMessage() }}</p>
+  } @else if (plantillas().length === 0) {
+    <div class="page__empty">
+      <p>Todavía no hay plantillas creadas.</p>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Fecha de creación</th>
+            <th class="table__actions-col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (plantilla of plantillas(); track plantilla.id) {
+            <tr>
+              <td>{{ plantilla.nombre }}</td>
+              <td><span class="badge">{{ plantilla.tipo }}</span></td>
+              <td>{{ plantilla.fechaCreacion }}</td>
+              <td class="table__actions">
+                <button type="button" class="btn btn--ghost" (click)="abrirEditar(plantilla)">Editar</button>
+                <button
+                  type="button"
+                  class="btn btn--ghost btn--danger"
+                  [disabled]="deletingId() === plantilla.id"
+                  (click)="eliminar(plantilla)"
+                >
+                  {{ deletingId() === plantilla.id ? 'Eliminando…' : 'Eliminar' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <app-inventario-items />
+</div>
+
+@if (modalOpen()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <form class="modal-card" [formGroup]="form" (ngSubmit)="guardar()" (click)="$event.stopPropagation()" novalidate>
+      <h2>{{ editingPlantilla() ? 'Editar planilla' : 'Nueva planilla' }}</h2>
+
+      @if (formError()) {
+        <div class="modal-card__alert" role="alert">{{ formError() }}</div>
+      }
+
+      <label class="field">
+        <span class="field__label">Nombre de la planilla</span>
+        <input type="text" formControlName="nombre" class="field__input" autocomplete="off" />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Tipo</span>
+        <select formControlName="tipo" class="field__input">
+          @for (t of tipos; track t) {
+            <option [value]="t">{{ t }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Fecha de creación</span>
+        <input type="date" formControlName="fechaCreacion" class="field__input" />
+      </label>
+
+      <div class="modal-card__actions">
+        <button type="button" class="btn btn--ghost" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+          {{ submitting() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

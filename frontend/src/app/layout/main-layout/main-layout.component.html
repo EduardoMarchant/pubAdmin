@@ -1,0 +1,95 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <img src="img/Logo.png" alt="Logo de la empresa" class="sidebar__logo" />
+    </div>
+
+    <nav class="sidebar__nav">
+      @for (item of menuItems; track item.label) {
+        @if (item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="sidebar__nav-item--active"
+            class="sidebar__nav-item"
+          >
+            <svg class="sidebar__nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M16 14c2.67 0 8 1.34 8 4v2H0v-2c0-2.66 5.33-4 8-4Zm0-2a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"
+                fill="currentColor"
+              />
+            </svg>
+            <span>{{ item.label }}</span>
+          </a>
+        } @else if (item.children) {
+          <button
+            type="button"
+            class="sidebar__nav-item sidebar__nav-item--toggle"
+            (click)="toggleMenu(item.label)"
+          >
+            <svg class="sidebar__nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              @if (item.icon === 'calendar') {
+                <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6" />
+                <path d="M3 10h18" stroke="currentColor" stroke-width="1.6" />
+                <path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              } @else if (item.icon === 'people') {
+                <circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6" />
+                <path
+                  d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              } @else {
+                <path
+                  d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5Z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linejoin="round"
+                />
+                <path d="M3 7.5v9L12 21l9-4.5v-9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                <path d="M12 12v9" stroke="currentColor" stroke-width="1.6" />
+              }
+            </svg>
+            <span>{{ item.label }}</span>
+            <svg
+              class="sidebar__chevron"
+              [class.sidebar__chevron--open]="isExpanded(item.label)"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+
+          @if (isExpanded(item.label)) {
+            <div class="sidebar__submenu">
+              @for (child of item.children; track child.path) {
+                <a
+                  [routerLink]="child.path"
+                  routerLinkActive="sidebar__nav-item--active"
+                  class="sidebar__nav-item sidebar__nav-item--sub"
+                >
+                  <span>{{ child.label }}</span>
+                </a>
+              }
+            </div>
+          }
+        }
+      }
+    </nav>
+  </aside>
+
+  <div class="shell__main">
+    <header class="topbar">
+      @if (currentUser(); as user) {
+        <span class="topbar__user">{{ user.nombre }}</span>
+      }
+      <button type="button" class="topbar__logout" (click)="logout()">Cerrar sesión</button>
+    </header>
+
+    <main class="shell__content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
