@@ -1,0 +1,110 @@
+<div class="page">
+  <header class="page__header">
+    <h1>Histórico de inventario</h1>
+    <p>Consulta el historial de inventarios realizados.</p>
+  </header>
+
+  <div class="filters">
+    <label class="field">
+      <span class="field__label">Planilla</span>
+      <select [formControl]="plantillaControl" class="field__input">
+        <option [ngValue]="null">Todas las planillas</option>
+        @for (p of plantillas(); track p.id) {
+          <option [ngValue]="p.id">{{ p.nombre }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="field__label">Fecha</span>
+      <input type="date" [formControl]="fechaControl" class="field__input" />
+    </label>
+
+    <div class="filters__actions">
+      <button type="button" class="btn btn--primary" (click)="buscar()">Buscar</button>
+      <button type="button" class="btn btn--ghost" (click)="limpiarFiltros()">Limpiar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Tipo de planilla</th>
+          <th>Planilla</th>
+          <th>Fecha</th>
+          <th>Usuario</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td class="table__empty" colspan="4">Cargando histórico…</td>
+          </tr>
+        } @else if (error()) {
+          <tr>
+            <td class="table__empty table__empty--error" colspan="4">{{ error() }}</td>
+          </tr>
+        } @else if (resultados().length === 0) {
+          <tr>
+            <td class="table__empty" colspan="4">No se encontraron inventarios con esos filtros.</td>
+          </tr>
+        } @else {
+          @for (registro of resultados(); track registro.plantillaId + '-' + registro.fecha + '-' + registro.usuarioId) {
+            <tr class="table__row--selectable" (dblclick)="abrirDetalle(registro)">
+              <td>{{ registro.plantillaTipo }}</td>
+              <td>{{ registro.plantillaNombre }}</td>
+              <td>{{ registro.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ registro.usuarioNombre }}</td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if (detalleAbierto(); as registro) {
+  <div class="modal-overlay" (click)="cerrarDetalle()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h2>Detalle del inventario</h2>
+      <p class="modal-card__subtitle">
+        {{ registro.plantillaNombre }} ({{ registro.plantillaTipo }}) —
+        {{ registro.fecha | date: 'dd/MM/yyyy HH:mm' }} — {{ registro.usuarioNombre }}
+      </p>
+
+      @if (detalleLoading()) {
+        <p class="page__state">Cargando detalle…</p>
+      } @else if (detalleError()) {
+        <p class="page__state page__state--error">{{ detalleError() }}</p>
+      } @else {
+        <div class="table-wrap modal-card__table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Ítem</th>
+                <th>Categoría</th>
+                <th>Cantidad anterior</th>
+                <th>Cantidad actual</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of detalleItems(); track item.itemNombre) {
+                <tr>
+                  <td>{{ item.itemNombre }}</td>
+                  <td>{{ item.itemCategoria }}</td>
+                  <td>{{ item.cantidadAnterior }}</td>
+                  <td>{{ item.cantidadActual }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <div class="modal-card__actions">
+        <button type="button" class="btn btn--primary" (click)="cerrarDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

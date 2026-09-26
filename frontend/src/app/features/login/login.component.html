@@ -1,0 +1,47 @@
+<div class="login-page">
+  <form class="login-card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="login-card__brand">
+      <span class="login-card__logo">pA</span>
+      <h1>pubAdmin</h1>
+      <p>Ingresa tus credenciales para continuar</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="login-card__alert" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <label class="field">
+      <span class="field__label">Usuario</span>
+      <input
+        type="text"
+        formControlName="username"
+        autocomplete="username"
+        placeholder="admin"
+        [class.field__input--invalid]="form.controls.username.invalid && form.controls.username.touched"
+        class="field__input"
+      />
+    </label>
+
+    <label class="field">
+      <span class="field__label">Contraseña</span>
+      <input
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+        placeholder="••••••••"
+        [class.field__input--invalid]="form.controls.password.invalid && form.controls.password.touched"
+        class="field__input"
+      />
+    </label>
+
+    <button type="submit" class="login-card__submit" [disabled]="loading()">
+      @if (loading()) {
+        Ingresando…
+      } @else {
+        Iniciar sesión
+      }
+    </button>
+  </form>
+</div>

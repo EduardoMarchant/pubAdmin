@@ -1,0 +1,100 @@
+<div class="page">
+  <header class="page__header">
+    <h1>Horarios</h1>
+    <p>Selecciona una semana para ver la pizarra de turnos y arrastra alias u horarios a cada celda.</p>
+  </header>
+
+  <label class="field field--inline">
+    <span class="field__label">Semana</span>
+    <input
+      type="week"
+      class="field__input"
+      [value]="semanaSeleccionada()"
+      (change)="onSemanaChange($event)"
+    />
+  </label>
+
+  <div class="paleta">
+    <div class="paleta__grupo">
+      <h2 class="paleta__titulo">Equipo</h2>
+      <div class="paleta__chips">
+        @for (integrante of integrantes(); track integrante.id) {
+          <div class="chip chip--alias" draggable="true" (dragstart)="iniciarArrastre('alias', aliasDe(integrante))">
+            {{ aliasDe(integrante) }}
+          </div>
+        }
+        @if (integrantes().length === 0) {
+          <p class="paleta__vacio">No hay integrantes registrados.</p>
+        }
+      </div>
+    </div>
+
+    <div class="paleta__grupo">
+      <h2 class="paleta__titulo">Horarios</h2>
+      <div class="paleta__chips">
+        @for (horario of horariosCatalogo(); track horario.id) {
+          <div
+            class="chip chip--horario"
+            draggable="true"
+            (dragstart)="iniciarArrastre('horario', horario.nombre)"
+          >
+            {{ horario.nombre }}
+          </div>
+        }
+        @if (horariosCatalogo().length === 0) {
+          <p class="paleta__vacio">No hay horarios registrados.</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="pizarra">
+    <div class="pizarra__dia-header pizarra__dia-header--vacio"></div>
+    @for (dia of dias(); track dia.nombre) {
+      <div class="pizarra__dia-header">
+        <span class="pizarra__dia-nombre">{{ dia.nombre }}</span>
+        <span class="pizarra__dia-fecha">{{ dia.fechaCorta }}</span>
+      </div>
+    }
+
+    @for (etiqueta of etiquetasFilas; track etiqueta; let filaIndex = $index) {
+      <div class="pizarra__celda pizarra__celda--etiqueta">{{ etiqueta }}</div>
+      @for (dia of dias(); track dia.nombre; let diaIndex = $index) {
+        <div
+          class="pizarra__celda pizarra__celda--drop"
+          (dragover)="permitirSoltar($event)"
+          (drop)="soltarEnCelda($event, diaIndex, filaIndex)"
+        >
+          @for (subfila of celda(diaIndex, filaIndex); track subfila.id) {
+            <div class="asignacion-fila">
+              @if (subfila.alias) {
+                <span class="chip-asignado">
+                  <span class="chip-asignado__texto">{{ subfila.alias.etiqueta }}</span>
+                  <button
+                    type="button"
+                    class="chip-asignado__quitar"
+                    (click)="quitarAlias(diaIndex, filaIndex, subfila.id)"
+                  >
+                    ×
+                  </button>
+                </span>
+              }
+              @if (subfila.horario) {
+                <span class="chip-asignado chip-asignado--horario">
+                  <span class="chip-asignado__texto">{{ subfila.horario.etiqueta }}</span>
+                  <button
+                    type="button"
+                    class="chip-asignado__quitar"
+                    (click)="quitarHorario(diaIndex, filaIndex, subfila.id)"
+                  >
+                    ×
+                  </button>
+                </span>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

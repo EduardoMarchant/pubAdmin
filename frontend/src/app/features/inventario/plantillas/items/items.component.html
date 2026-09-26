@@ -1,0 +1,155 @@
+<div class="items">
+  <header class="items__header">
+    <h2>Ítems de inventario</h2>
+    <div class="items__header-actions">
+      <input
+        #archivoInput
+        type="file"
+        accept=".xlsx,.xls"
+        hidden
+        (change)="onArchivoSeleccionado($event, archivoInput)"
+      />
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="importing()"
+        (click)="archivoInput.click()"
+      >
+        {{ importing() ? 'Cargando…' : 'Cargar ítems' }}
+      </button>
+      <button type="button" class="btn btn--primary" (click)="abrirCrear()">+ Nuevo ítem</button>
+    </div>
+  </header>
+
+  @if (importError()) {
+    <p class="items__state items__state--error">{{ importError() }}</p>
+  }
+
+  <div class="items__search">
+    <select [formControl]="searchPlantillaId" class="field__input">
+      <option [ngValue]="null" disabled>Selecciona una planilla…</option>
+      @for (p of plantillas(); track p.id) {
+        <option [ngValue]="p.id">{{ p.nombre }}</option>
+      }
+    </select>
+    <button type="button" class="btn btn--ghost" (click)="buscar()">Buscar</button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (!searched()) {
+          <tr>
+            <td class="table__empty" colspan="3">Selecciona una planilla y presiona "Buscar" para ver sus ítems.</td>
+          </tr>
+        } @else if (itemsLoading()) {
+          <tr>
+            <td class="table__empty" colspan="3">Cargando ítems…</td>
+          </tr>
+        } @else if (itemsError()) {
+          <tr>
+            <td class="table__empty table__empty--error" colspan="3">{{ itemsError() }}</td>
+          </tr>
+        } @else if (items().length === 0) {
+          <tr>
+            <td class="table__empty" colspan="3">Esta planilla no tiene ítems registrados.</td>
+          </tr>
+        } @else {
+          @for (item of items(); track item.id) {
+            <tr>
+              <td>{{ item.nombre }}</td>
+              <td>{{ item.categoria }}</td>
+              <td>
+                <span class="badge" [class.badge--inactive]="item.estado === 'Inactivo'">
+                  {{ item.estado }}
+                </span>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if (modalOpen()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <form class="modal-card" [formGroup]="form" (ngSubmit)="guardar()" (click)="$event.stopPropagation()" novalidate>
+      <h2>Nuevo ítem</h2>
+
+      @if (formError()) {
+        <div class="modal-card__alert" role="alert">{{ formError() }}</div>
+      }
+
+      <label class="field">
+        <span class="field__label">Nombre ítem</span>
+        <input type="text" formControlName="nombre" class="field__input" autocomplete="off" />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Categoría ítem</span>
+        <input type="text" formControlName="categoria" class="field__input" autocomplete="off" />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Estado</span>
+        <select formControlName="estado" class="field__input">
+          @for (e of estados; track e) {
+            <option [value]="e">{{ e }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Planilla</span>
+        <select formControlName="plantillaId" class="field__input">
+          <option [ngValue]="null" disabled>Selecciona una planilla…</option>
+          @for (p of plantillas(); track p.id) {
+            <option [ngValue]="p.id">{{ p.nombre }}</option>
+          }
+        </select>
+      </label>
+
+      <div class="modal-card__actions">
+        <button type="button" class="btn btn--ghost" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+          {{ submitting() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (importResult(); as resultado) {
+  <div class="modal-overlay" (click)="cerrarResultadoImportacion()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h2>Resultado de la carga</h2>
+
+      <p class="items__import-summary">
+        {{ resultado.insertados }} ítem(s) importado(s) correctamente.
+        @if (resultado.errores.length > 0) {
+          {{ resultado.errores.length }} fila(s) con errores.
+        }
+      </p>
+
+      @if (resultado.errores.length > 0) {
+        <ul class="items__import-errors">
+          @for (error of resultado.errores; track error.fila) {
+            <li>Fila {{ error.fila }}: {{ error.motivo }}</li>
+          }
+        </ul>
+      }
+
+      <div class="modal-card__actions">
+        <button type="button" class="btn btn--primary" (click)="cerrarResultadoImportacion()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

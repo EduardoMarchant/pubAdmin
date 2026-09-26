@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: pubadmin-backend
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:pubadmin}
+    username: ${DB_USER:pubadmin}
+    password: ${DB_PASSWORD:pubadmin}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+pubadmin:
+  jwt:
+    secret: ${JWT_SECRET:cambia-este-secreto-en-produccion-por-uno-largo-y-aleatorio-1234567890}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+
+logging:
+  level:
+    com.pubadmin: INFO

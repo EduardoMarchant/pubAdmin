@@ -1,0 +1,86 @@
+<div class="page">
+  <header class="page__header">
+    <h1>Nuevo inventario</h1>
+    <p>Selecciona una planilla para registrar el conteo de sus ítems.</p>
+  </header>
+
+  <label class="field field--inline">
+    <span class="field__label">Planilla</span>
+    <select [formControl]="plantillaControl" (change)="onPlantillaChange()" class="field__input">
+      <option [ngValue]="null">Selecciona una planilla…</option>
+      @for (p of plantillas(); track p.id) {
+        <option [ngValue]="p.id">{{ p.nombre }}</option>
+      }
+    </select>
+  </label>
+
+  @if (guardadoOk()) {
+    <p class="page__state page__state--ok">{{ guardadoOk() }}</p>
+  }
+  @if (error()) {
+    <p class="page__state page__state--error">{{ error() }}</p>
+  }
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Estado</th>
+          <th>Cantidad anterior</th>
+          <th>Cantidad actual</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (plantillaControl.value == null) {
+          <tr>
+            <td class="table__empty" colspan="5">Selecciona una planilla para comenzar.</td>
+          </tr>
+        } @else if (loading()) {
+          <tr>
+            <td class="table__empty" colspan="5">Cargando ítems…</td>
+          </tr>
+        } @else if (filas().length === 0) {
+          <tr>
+            <td class="table__empty" colspan="5">Esta planilla no tiene ítems registrados.</td>
+          </tr>
+        } @else {
+          @for (fila of filas(); track fila.itemId; let i = $index) {
+            <tr>
+              <td>{{ fila.itemNombre }}</td>
+              <td>{{ fila.itemCategoria }}</td>
+              <td>
+                <span class="badge" [class.badge--inactive]="fila.itemEstado === 'Inactivo'">
+                  {{ fila.itemEstado }}
+                </span>
+              </td>
+              <td>{{ fila.cantidadAnterior }}</td>
+              <td>
+                <input
+                  type="number"
+                  class="field__input field__input--small"
+                  min="0"
+                  [formControl]="cantidades.at(i)"
+                />
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (filas().length > 0) {
+    <div class="page__actions">
+      <button
+        type="button"
+        class="btn btn--primary"
+        [disabled]="guardando() || cantidades.invalid"
+        (click)="guardar()"
+      >
+        {{ guardando() ? 'Guardando…' : 'Guardar inventario' }}
+      </button>
+    </div>
+  }
+</div>
