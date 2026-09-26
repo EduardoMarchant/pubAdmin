@@ -1,0 +1,63 @@
+<div class="page">
+  <header class="page__header">
+    <h1>Roles</h1>
+    <p>Configura qué menús y submenús puede ver cada rol.</p>
+  </header>
+
+  <label class="field field--inline">
+    <span class="field__label">Rol</span>
+    <select class="field__input" [value]="rolSeleccionado()" (change)="onRolChange($event)">
+      @for (r of roles; track r.value) {
+        <option [value]="r.value">{{ r.label }}</option>
+      }
+    </select>
+  </label>
+
+  @if (mensaje()) {
+    <p class="page__state page__state--ok">{{ mensaje() }}</p>
+  }
+  @if (error()) {
+    <p class="page__state page__state--error">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="page__state">Cargando permisos…</p>
+  } @else {
+    <div class="permisos">
+      @for (grupo of estructura; track grupo.clave) {
+        <div class="permisos__grupo">
+          <div class="permisos__fila permisos__fila--grupo">
+            <span class="permisos__etiqueta">{{ grupo.etiqueta }}</span>
+            <label class="switch">
+              <input type="checkbox" [checked]="habilitado(grupo.clave)" (change)="toggleGrupo(grupo)" />
+              <span class="switch__track"><span class="switch__thumb"></span></span>
+            </label>
+          </div>
+          @for (hijo of grupo.hijos; track hijo.clave) {
+            <div
+              class="permisos__fila permisos__fila--hijo"
+              [class.permisos__fila--deshabilitada]="!habilitado(grupo.clave)"
+            >
+              <span class="permisos__etiqueta">{{ hijo.etiqueta }}</span>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  [checked]="habilitado(hijo.clave)"
+                  [disabled]="!habilitado(grupo.clave)"
+                  (change)="toggleHijo(grupo, hijo)"
+                />
+                <span class="switch__track"><span class="switch__thumb"></span></span>
+              </label>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="page__actions">
+      <button type="button" class="btn btn--primary" [disabled]="guardando()" (click)="guardar()">
+        {{ guardando() ? 'Guardando…' : 'Guardar permisos' }}
+      </button>
+    </div>
+  }
+</div>
